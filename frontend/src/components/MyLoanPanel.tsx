@@ -185,25 +185,29 @@ export function MyLoanPanel({
       {/* Action button bar */}
       <div className={styles.actionBar}>
         <button
-          className={styles.actionBtn}
+          type="button"
+          className={`${styles.actionBtn} ${styles.actionBtnGreen}`}
           onClick={() => setActiveModal("addCollateral")}
         >
           Add Collateral
         </button>
         <button
-          className={styles.actionBtn}
+          type="button"
+          className={`${styles.actionBtn} ${styles.actionBtnYellow}`}
           onClick={() => setActiveModal("withdrawCollateral")}
         >
           Withdraw Collateral
         </button>
         <button
-          className={styles.actionBtn}
+          type="button"
+          className={`${styles.actionBtn} ${styles.actionBtnGreen}`}
           onClick={() => setActiveModal("borrow")}
         >
           Borrow
         </button>
         <button
-          className={`${styles.actionBtn} ${styles.actionBtnRepay}`}
+          type="button"
+          className={`${styles.actionBtn} ${styles.actionBtnYellow}`}
           onClick={() => setActiveModal("repay")}
         >
           Repay

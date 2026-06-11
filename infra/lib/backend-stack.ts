@@ -20,6 +20,10 @@ function normalizeDomain(value: string | undefined): string | undefined {
 export class BackendStack extends cdk.Stack {
   public readonly loansTable: dynamodb.Table;
   public readonly pricesTable: dynamodb.Table;
+  public readonly liquidationsTable: dynamodb.Table;
+  public readonly bidsTable: dynamodb.Table;
+  public readonly stakersTable: dynamodb.Table;
+  public readonly tokenStatsTable: dynamodb.Table;
 
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -41,6 +45,40 @@ export class BackendStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.RETAIN,
     });
 
+    // Liquidation event history — PK: txId (unique per liquidation tx)
+    this.liquidationsTable = new dynamodb.Table(this, "LiquidationsTable", {
+      tableName: process.env.LIQUIDATIONS_TABLE_NAME ?? "abx-liquidations",
+      partitionKey: { name: "txId", type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
+    });
+
+    // Bid event index — PK: bid address; maps bid → discount %
+    // Also stores the watcher cursor (PK "__cursor__") for NewBid event scanning.
+    this.bidsTable = new dynamodb.Table(this, "BidsTable", {
+      tableName: process.env.BIDS_TABLE_NAME ?? "abx-bids",
+      partitionKey: { name: "bid", type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
+    });
+
+    // Staking positions — PK: stakerContract (Staker sub-contract address)
+    // Also stores a __stats__ summary row with aggregate totals.
+    this.stakersTable = new dynamodb.Table(this, "StakersTable", {
+      tableName: process.env.STAKERS_TABLE_NAME ?? "abx-stakers",
+      partitionKey: { name: "stakerContract", type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
+    });
+
+    // Token distribution snapshot — PK: pk (single row "__latest__")
+    this.tokenStatsTable = new dynamodb.Table(this, "TokenStatsTable", {
+      tableName: process.env.TOKEN_STATS_TABLE_NAME ?? "abx-token-stats",
+      partitionKey: { name: "pk", type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
+    });
+
     const repoRoot = path.join(__dirname, "../..");
     const artifactsTs = path.join(repoRoot, "artifacts/artifacts/ts");
 
@@ -53,6 +91,10 @@ export class BackendStack extends cdk.Stack {
       environment: {
         TABLE_NAME: this.loansTable.tableName,
         PRICES_TABLE_NAME: this.pricesTable.tableName,
+        LIQUIDATIONS_TABLE_NAME: this.liquidationsTable.tableName,
+        BIDS_TABLE_NAME: this.bidsTable.tableName,
+        STAKERS_TABLE_NAME: this.stakersTable.tableName,
+        TOKEN_STATS_TABLE_NAME: this.tokenStatsTable.tableName,
         NODE_URL: process.env.ALEPHIUM_NODE_URL ?? "https://node.mainnet.alphscan.io",
       },
       bundling: {
@@ -75,8 +117,12 @@ export class BackendStack extends cdk.Stack {
       },
     });
 
-    this.loansTable.grantReadData(apiHandler);
+    this.loansTable.grantReadWriteData(apiHandler);
     this.pricesTable.grantReadData(apiHandler);
+    this.liquidationsTable.grantReadData(apiHandler);
+    this.bidsTable.grantReadData(apiHandler);
+    this.stakersTable.grantReadWriteData(apiHandler);
+    this.tokenStatsTable.grantReadData(apiHandler);
 
     const customDomain = normalizeDomain(process.env.CLOUDFRONT_CUSTOM_DOMAIN);
 
@@ -89,7 +135,7 @@ export class BackendStack extends cdk.Stack {
       apiName: process.env.API_NAME ?? "abx-loans-api",
       corsPreflight: {
         allowOrigins: allowedOrigins,
-        allowMethods: [apigatewayv2.CorsHttpMethod.GET],
+        allowMethods: [apigatewayv2.CorsHttpMethod.GET, apigatewayv2.CorsHttpMethod.POST],
         allowHeaders: ["Content-Type"],
       },
     });
@@ -113,6 +159,66 @@ export class BackendStack extends cdk.Stack {
 
     httpApi.addRoutes({
       path: "/loans/by-owner/{address}",
+      methods: [apigatewayv2.HttpMethod.GET],
+      integration: apiIntegration,
+    });
+
+    httpApi.addRoutes({
+      path: "/auctions",
+      methods: [apigatewayv2.HttpMethod.GET],
+      integration: apiIntegration,
+    });
+
+    httpApi.addRoutes({
+      path: "/liquidations",
+      methods: [apigatewayv2.HttpMethod.GET],
+      integration: apiIntegration,
+    });
+
+    httpApi.addRoutes({
+      path: "/auctions/{discount}/bids",
+      methods: [apigatewayv2.HttpMethod.GET],
+      integration: apiIntegration,
+    });
+
+    httpApi.addRoutes({
+      path: "/auctions/bidders",
+      methods: [apigatewayv2.HttpMethod.GET],
+      integration: apiIntegration,
+    });
+
+    httpApi.addRoutes({
+      path: "/auctions/positions/{wallet}",
+      methods: [apigatewayv2.HttpMethod.GET],
+      integration: apiIntegration,
+    });
+
+    httpApi.addRoutes({
+      path: "/loans/index",
+      methods: [apigatewayv2.HttpMethod.POST],
+      integration: apiIntegration,
+    });
+
+    httpApi.addRoutes({
+      path: "/stakers",
+      methods: [apigatewayv2.HttpMethod.GET],
+      integration: apiIntegration,
+    });
+
+    httpApi.addRoutes({
+      path: "/stakers/by-owner/{wallet}",
+      methods: [apigatewayv2.HttpMethod.GET],
+      integration: apiIntegration,
+    });
+
+    httpApi.addRoutes({
+      path: "/stakers/reindex",
+      methods: [apigatewayv2.HttpMethod.POST],
+      integration: apiIntegration,
+    });
+
+    httpApi.addRoutes({
+      path: "/token-stats",
       methods: [apigatewayv2.HttpMethod.GET],
       integration: apiIntegration,
     });
@@ -209,6 +315,26 @@ export class BackendStack extends cdk.Stack {
     new cdk.CfnOutput(this, "PricesTableName", {
       value: this.pricesTable.tableName,
       exportName: "AbxPricesTableName",
+    });
+
+    new cdk.CfnOutput(this, "LiquidationsTableName", {
+      value: this.liquidationsTable.tableName,
+      exportName: "AbxLiquidationsTableName",
+    });
+
+    new cdk.CfnOutput(this, "BidsTableName", {
+      value: this.bidsTable.tableName,
+      exportName: "AbxBidsTableName",
+    });
+
+    new cdk.CfnOutput(this, "StakersTableName", {
+      value: this.stakersTable.tableName,
+      exportName: "AbxStakersTableName",
+    });
+
+    new cdk.CfnOutput(this, "TokenStatsTableName", {
+      value: this.tokenStatsTable.tableName,
+      exportName: "AbxTokenStatsTableName",
     });
 
     new cdk.CfnOutput(this, "TableArn", {

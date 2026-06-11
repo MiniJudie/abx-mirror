@@ -1,7 +1,19 @@
-export function formatTokenAmount(value: string | number): string {
+const US_NUMBER_FORMAT = "en-US" as const;
+
+export function formatNumber(
+  value: string | number,
+  options?: { minimumFractionDigits?: number; maximumFractionDigits?: number },
+): string {
   const n = typeof value === "string" ? parseFloat(value) : value;
-  if (!Number.isFinite(n)) return "0.00";
-  return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (!Number.isFinite(n)) return "0";
+  return n.toLocaleString(US_NUMBER_FORMAT, {
+    minimumFractionDigits: options?.minimumFractionDigits,
+    maximumFractionDigits: options?.maximumFractionDigits,
+  });
+}
+
+export function formatTokenAmount(value: string | number): string {
+  return formatNumber(value, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 export function formatAlphUsdPrice(value: string | number): string {

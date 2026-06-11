@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useWallet } from "@alephium/web3-react";
 import { sendEvent } from "@socialgouv/matomo-next";
-import { fetchLoanByOwner, fetchLoans, fetchOraclePrice, type Loan } from "@/lib/api";
+import { fetchLoanByOwner, fetchLoans, fetchOraclePrice, indexLoan, type Loan } from "@/lib/api";
 import { formatTokenAmount, toUsd } from "@/lib/format";
 import {
   LIQUIDATION_LTV_PERCENT,
@@ -43,6 +43,14 @@ const COLUMNS: { key: SortKey; label: string }[] = [
   { key: "interestRate", label: "Interest" },
   { key: "lastUpdated", label: "Updated" },
 ];
+
+const NUMERIC_COLUMNS = new Set<SortKey>([
+  "collateral",
+  "debt",
+  "ltv",
+  "liquidationPrice",
+  "interestRate",
+]);
 
 function truncate(addr: string, start = 6, end = 4): string {
   if (addr.length <= start + end + 3) return addr;
@@ -191,15 +199,25 @@ export function LoanList() {
     const address = wallet.account.address;
     setMyLoanLoading(true);
     fetchLoanByOwner(address)
-      .then((loan) => setMyLoan(loan))
+      .then(async (loan) => {
+        setMyLoan(loan);
+        if (!loan) return;
+        // Ensure the loan is persisted in DynamoDB (fire-and-forget)
+        indexLoan(loan.owner).catch(() => {});
+        // Inject into the list state if not already present so other
+        // users see it on their next load and the count stays accurate
+        setLoans((prev) =>
+          prev.some((l) => l.loanAddress === loan.loanAddress)
+            ? prev
+            : [...prev, loan],
+        );
+      })
       .catch(() => setMyLoan(null))
       .finally(() => setMyLoanLoading(false));
   }, [wallet.connectionStatus, wallet.account, myLoanTick]);
 
-  const tableLoans = useMemo(() => {
-    if (!myLoan) return filtered;
-    return filtered.filter((loan) => loan.loanAddress !== myLoan.loanAddress);
-  }, [filtered, myLoan]);
+  // Keep myLoan in the table — highlight the row instead of hiding it.
+  const tableLoans = useMemo(() => filtered, [filtered]);
 
   const sorted = useMemo(() => {
     return [...tableLoans].sort((a, b) =>
@@ -322,7 +340,10 @@ export function LoanList() {
                 <thead>
                   <tr>
                     {COLUMNS.map((col) => (
-                      <th key={col.key}>
+                      <th
+                        key={col.key}
+                        className={NUMERIC_COLUMNS.has(col.key) ? styles.numCell : undefined}
+                      >
                         <button
                           type="button"
                           className={styles.sortBtn}
@@ -345,9 +366,10 @@ export function LoanList() {
                     const belowLiq =
                       liqPrice !== null && alphUsd !== null && alphUsd < liqPrice;
                     const explorerUrl = `https://explorer.alephium.org/addresses/${loan.loanAddress}`;
+                    const isMyLoan = myLoan?.loanAddress === loan.loanAddress;
 
                     return (
-                      <tr key={loan.loanAddress}>
+                      <tr key={loan.loanAddress} className={isMyLoan ? styles.myLoanRow : undefined}>
                         <td>
                           <a
                             href={`https://explorer.alephium.org/addresses/${loan.owner}`}
@@ -360,7 +382,7 @@ export function LoanList() {
                             <span className={styles.externalIcon}>↗</span>
                           </a>
                         </td>
-                        <td>
+                        <td className={styles.numCell}>
                           <div className={styles.amountCell}>
                             <span className={styles.amountRow}>
                               <span className={styles.amount}>{formatTokenAmount(loan.collateral)}</span>
@@ -373,7 +395,7 @@ export function LoanList() {
                             )}
                           </div>
                         </td>
-                        <td>
+                        <td className={styles.numCell}>
                           <div className={styles.amountCell}>
                             <span className={styles.amountRow}>
                               <span className={styles.amount}>{formatTokenAmount(loan.debt)}</span>
@@ -386,7 +408,7 @@ export function LoanList() {
                             )}
                           </div>
                         </td>
-                        <td>
+                        <td className={styles.numCell}>
                           {ltv === null || !riskTier ? (
                             <span className={styles.muted}>—</span>
                           ) : (
@@ -407,7 +429,7 @@ export function LoanList() {
                             </div>
                           )}
                         </td>
-                        <td>
+                        <td className={styles.numCell}>
                           {liqPrice === null ? (
                             <span className={styles.muted}>—</span>
                           ) : (
@@ -424,7 +446,7 @@ export function LoanList() {
                             </span>
                           )}
                         </td>
-                        <td className={styles.muted}>
+                        <td className={`${styles.muted} ${styles.numCell}`}>
                           {displayInterestRate(loan.interestRate, loan.debt)}
                         </td>
                         <td className={styles.muted}>{timeAgo(loan.lastUpdated)}</td>

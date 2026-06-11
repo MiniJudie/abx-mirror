@@ -59,8 +59,10 @@
 .stat {
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   gap: 6px;
   min-width: 0;
+  text-align: right;
 }
 
 .statLabel {
@@ -74,6 +76,7 @@
 .statValue {
   display: inline-flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 6px;
   font-size: 14px;
   font-weight: 600;
@@ -91,6 +94,7 @@
 }
 
 .ltvBar {
+  width: 100%;
   height: 3px;
   background: var(--border-subtle);
   border-radius: 2px;
@@ -112,33 +116,41 @@
 }
 
 .actionBtn {
-  background: none;
-  border: 1px solid var(--accent-green-border);
-  color: var(--accent-green);
+  border: none;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   font-family: inherit;
-  padding: 9px 8px;
+  letter-spacing: 0.02em;
+  padding: 10px 8px;
   border-radius: 6px;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.15s, border-color 0.15s;
+  transition: opacity 0.15s, transform 0.1s;
 }
 
-.actionBtn:hover {
-  background: var(--accent-green-muted);
-  border-color: var(--accent-green);
+.actionBtn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
 
-.actionBtnRepay {
-  border-color: var(--border-card);
-  color: var(--text-secondary);
+.actionBtn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
-.actionBtnRepay:hover {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: var(--text-muted);
-  color: var(--text-primary);
+.actionBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.actionBtnGreen {
+  background: var(--accent-green);
+  color: #000;
+}
+
+.actionBtnYellow {
+  background: #fbbf24;
+  color: #000;
 }
 
 .footer {

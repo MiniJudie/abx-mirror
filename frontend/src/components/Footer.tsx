@@ -56,9 +56,20 @@ export function Footer() {
 
           <div className={styles.linkCol}>
             <span className={styles.colTitle}>COMMUNITY</span>
+            <a href="https://alephium-mirrors.com" target="_blank" rel="noopener noreferrer">
+              Alephium Mirrors
+            </a>
             <a href="https://discord.gg/alephium" target="_blank" rel="noopener noreferrer">Discord</a>
             <a href="https://x.com/Alephium" target="_blank" rel="noopener noreferrer">Twitter</a>
             <a href="https://github.com/alephium" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a
+              href="https://github.com/MiniJudie/abx-mirror"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.mirrorGithub}
+            >
+              Mirror Source ↗
+            </a>
           </div>
 
           <div className={styles.linkCol}>
@@ -80,7 +91,16 @@ export function Footer() {
       </div>
 
       <div className={styles.copyright}>
-        © 2024 AlphBanX Mirror. Community-run interface for Alephium.
+        © {new Date().getFullYear()} AlphBanX Mirror. Community-run interface for Alephium.
+        {" · "}
+        <a
+          href="https://github.com/MiniJudie/abx-mirror"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.copyrightLink}
+        >
+          Open source on GitHub ↗
+        </a>
       </div>
     </footer>
   );

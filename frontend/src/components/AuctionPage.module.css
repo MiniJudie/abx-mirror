@@ -1,0 +1,357 @@
+.main {
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+.statsBar {
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+}
+
+.statsInner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  padding: 24px 16px;
+  border-right: 1px solid var(--border-subtle);
+}
+
+.statItem:last-child {
+  border-right: none;
+}
+
+.statLabel {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  text-align: right;
+}
+
+.content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.sectionSub {
+  font-size: 13px;
+  color: var(--text-muted);
+  max-width: 600px;
+}
+
+.poolsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+/* Skeleton loaders */
+.skeletonCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 8px;
+  padding: 20px 24px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonBadge {
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  background: var(--border-card);
+  flex-shrink: 0;
+}
+
+.skeletonLines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeletonLine {
+  height: 14px;
+  border-radius: 4px;
+  background: var(--border-card);
+}
+
+.skeletonLineShort {
+  width: 60%;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Bid status filter tabs */
+.statusTabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.statusTab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 20px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  letter-spacing: 0.04em;
+}
+
+.statusTab:hover {
+  border-color: var(--status-auction);
+  color: var(--status-auction);
+}
+
+.statusTabActive {
+  background: var(--status-auction);
+  border-color: var(--status-auction);
+  color: #fff;
+}
+
+.statusTabActive:hover {
+  color: #fff;
+  opacity: 0.9;
+}
+
+.statusTabCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  padding: 0 5px;
+  height: 18px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.statusTabActive .statusTabCount {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.biddersEmpty {
+  padding: 20px;
+  font-size: 13px;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 8px;
+}
+
+.connectPrompt {
+  padding: 20px 24px;
+  font-size: 13px;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border: 1px dashed var(--border-card);
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Bidders list */
+.biddersLoading {
+  padding: 20px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.biddersList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.bidderRow {
+  display: grid;
+  grid-template-columns: 180px 160px 1fr 56px;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.1s;
+}
+
+.bidderRow:last-child {
+  border-bottom: none;
+}
+
+.bidderRow:hover {
+  background: var(--bg-elevated);
+}
+
+.bidderAddr {
+  font-size: 12px;
+  font-family: "Courier New", monospace;
+  color: var(--status-auction);
+  text-decoration: none;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bidderAddr:hover {
+  opacity: 0.75;
+  text-decoration: underline;
+}
+
+.bidderAbd {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.bidderBar {
+  height: 6px;
+  background: var(--border-subtle);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bidderBarFill {
+  height: 100%;
+  background: var(--status-auction);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+  min-width: 2px;
+}
+
+.bidderPercent {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Error & loading states */
+.error {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--status-undercollateralized);
+}
+
+.retryBtn {
+  padding: 6px 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-card);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.retryBtn:hover {
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+}
+
+.loadingText {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 20px 0;
+}
+
+@media (max-width: 1100px) {
+  .poolsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .statsInner {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 20px;
+  }
+
+  .statItem:nth-child(2) {
+    border-right: none;
+  }
+
+  .statItem:nth-child(1),
+  .statItem:nth-child(2) {
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .content {
+    padding: 32px 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .poolsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .statsInner {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .content {
+    padding: 24px 16px;
+  }
+}

@@ -21,6 +21,12 @@ const nextConfig = {
     externalDir: true,
   },
   webpack: (config, { defaultLoaders }) => {
+    // pino (via @walletconnect/logger) optionally requires pino-pretty at build time.
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "pino-pretty": false,
+    };
+
     // Ensure SWC/Babel transpiles TypeScript in the artifacts directory.
     config.module.rules.push({
       test: /\.[jt]sx?$/,

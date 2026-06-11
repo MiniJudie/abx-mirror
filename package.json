@@ -7,9 +7,12 @@
     "deploy:watcher": "tsx scripts/deploy-watcher.ts",
     "trigger:watcher": "tsx scripts/trigger-watcher.ts",
     "deploy:frontend": "tsx scripts/deploy-frontend.ts",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "reindex:events": "tsx scripts/reindex-events.ts",
+    "seed:loan": "tsx scripts/seed-loan.ts"
   },
   "devDependencies": {
+    "@alephium/web3": "^2.0.0",
     "@types/node": "^20.0.0",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0"

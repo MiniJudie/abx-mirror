@@ -39,6 +39,9 @@ importers:
         specifier: ^8.0.0
         version: 8.0.1
     devDependencies:
+      '@alephium/web3':
+        specifier: ^2.0.0
+        version: 2.0.11
       '@types/node':
         specifier: ^20.0.0
         version: 20.19.42
@@ -4439,7 +4442,7 @@ snapshots:
     dependencies:
       '@adraffy/ens-normalize': 1.11.1
       '@noble/ciphers': 1.3.0
-      '@noble/curves': 1.9.2
+      '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0

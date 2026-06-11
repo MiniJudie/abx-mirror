@@ -10,15 +10,23 @@ import * as path from "path";
 interface WatcherStackProps extends cdk.StackProps {
   loansTableName: string;
   pricesTableName: string;
+  liquidationsTableName: string;
+  bidsTableName: string;
+  stakersTableName: string;
+  tokenStatsTableName: string;
 }
 
 export class WatcherStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: WatcherStackProps) {
     super(scope, id, props);
 
-    const { loansTableName, pricesTableName } = props;
+    const { loansTableName, pricesTableName, liquidationsTableName, bidsTableName, stakersTableName, tokenStatsTableName } = props;
     const loansTable = dynamodb.Table.fromTableName(this, "LoansTable", loansTableName);
     const pricesTable = dynamodb.Table.fromTableName(this, "PricesTable", pricesTableName);
+    const liquidationsTable = dynamodb.Table.fromTableName(this, "LiquidationsTable", liquidationsTableName);
+    const bidsTable = dynamodb.Table.fromTableName(this, "BidsTable", bidsTableName);
+    const stakersTable = dynamodb.Table.fromTableName(this, "StakersTable", stakersTableName);
+    const tokenStatsTable = dynamodb.Table.fromTableName(this, "TokenStatsTable", tokenStatsTableName);
 
     const repoRoot = path.join(__dirname, "../..");
     const artifactsTs = path.join(repoRoot, "artifacts/artifacts/ts");
@@ -32,6 +40,10 @@ export class WatcherStack extends cdk.Stack {
       environment: {
         TABLE_NAME: loansTableName,
         PRICES_TABLE_NAME: pricesTableName,
+        LIQUIDATIONS_TABLE_NAME: liquidationsTableName,
+        BIDS_TABLE_NAME: bidsTableName,
+        STAKERS_TABLE_NAME: stakersTableName,
+        TOKEN_STATS_TABLE_NAME: tokenStatsTableName,
         NODE_URL: process.env.ALEPHIUM_NODE_URL ?? "https://node.mainnet.alphscan.io",
       },
       bundling: {
@@ -56,6 +68,10 @@ export class WatcherStack extends cdk.Stack {
 
     loansTable.grantReadWriteData(watcherHandler);
     pricesTable.grantWriteData(watcherHandler);
+    liquidationsTable.grantReadWriteData(watcherHandler);
+    bidsTable.grantReadWriteData(watcherHandler);
+    stakersTable.grantReadWriteData(watcherHandler);
+    tokenStatsTable.grantWriteData(watcherHandler);
 
     const rule = new events.Rule(this, "WatcherSchedule", {
       schedule: events.Schedule.rate(cdk.Duration.minutes(5)),

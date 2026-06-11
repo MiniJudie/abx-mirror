@@ -1,18 +1,27 @@
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { sendEvent } from "@socialgouv/matomo-next";
 import { ConnectWalletButton } from "./ConnectWalletButton";
+import { DonationModal } from "./DonationModal";
 import styles from "./Header.module.css";
 
 const NAV_ITEMS = [
-  { label: "LOANS", href: "#loans", active: true, external: false },
-  { label: "AUCTIONS", href: "https://app.alphbanx.com", active: false, external: true },
-  { label: "STAKING", href: "https://app.alphbanx.com", active: false, external: true },
-  { label: "ABX", href: "https://app.alphbanx.com", active: false, external: true },
+  { label: "LOANS", href: "/", external: false },
+  { label: "AUCTIONS", href: "/auction", external: false },
+  { label: "STAKING", href: "/staking", external: false },
+  { label: "ABX/ABD", href: "/abx-abd", external: false },
+  { label: "ALPHBANX", href: "https://app.alphbanx.com", external: true },
 ] as const;
 
 export function Header() {
+  const pathname = usePathname();
+  const [donateOpen, setDonateOpen] = useState(false);
+
   return (
+    <>
     <header className={styles.header}>
       <div className={styles.inner}>
         <div className={styles.brand}>
@@ -34,23 +43,45 @@ export function Header() {
         </div>
 
         <nav className={styles.nav}>
-          {NAV_ITEMS.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              className={`${styles.navLink} ${item.active ? styles.navLinkActive : ""}`}
-              {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              onClick={() =>
-                sendEvent({
-                  category: "navigation",
-                  action: "click",
-                  name: item.label.toLowerCase(),
-                })
-              }
-            >
-              {item.label}
-            </a>
-          ))}
+          {NAV_ITEMS.map((item) => {
+            const isActive = !item.external && pathname === item.href;
+            if (item.external) {
+              return (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  className={styles.navLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() =>
+                    sendEvent({
+                      category: "navigation",
+                      action: "click",
+                      name: item.label.toLowerCase(),
+                    })
+                  }
+                >
+                  {item.label}
+                </a>
+              );
+            }
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={`${styles.navLink} ${isActive ? styles.navLinkActive : ""}`}
+                onClick={() =>
+                  sendEvent({
+                    category: "navigation",
+                    action: "click",
+                    name: item.label.toLowerCase(),
+                  })
+                }
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className={styles.actions}>
@@ -58,9 +89,19 @@ export function Header() {
             <span className={styles.networkDot} />
             Mainnet
           </div>
+          <button
+            className={styles.donateBtn}
+            onClick={() => setDonateOpen(true)}
+            title="Support the dev"
+          >
+            ♥
+          </button>
           <ConnectWalletButton />
         </div>
       </div>
     </header>
+
+    {donateOpen && <DonationModal onClose={() => setDonateOpen(false)} />}
+    </>
   );
 }
