@@ -1,0 +1,389 @@
+.section {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 32px 60px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.sectionTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.sectionSub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text-muted);
+  min-width: 220px;
+}
+
+.searchInput {
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  color: var(--text-primary);
+  width: 100%;
+  font-family: inherit;
+}
+
+.searchInput::placeholder {
+  color: var(--text-muted);
+}
+
+.count {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--border-card);
+  border-radius: 8px;
+  background: var(--bg-card);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+.sortBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  transition: color 0.15s;
+}
+
+.sortBtn:hover {
+  color: var(--accent-green);
+}
+
+.sortIcon {
+  color: var(--accent-green);
+  font-size: 11px;
+  min-width: 12px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.pageBtn {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 4px;
+  padding: 8px 16px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.pageBtn:hover:not(:disabled) {
+  border-color: var(--accent-green-border);
+  color: var(--accent-green);
+}
+
+.pageBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.pageRange {
+  color: var(--text-muted);
+}
+
+.table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background: var(--bg-card-hover);
+}
+
+.addressLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  color: var(--text-primary);
+  transition: color 0.15s;
+}
+
+.addressLink:hover {
+  color: var(--accent-green);
+}
+
+.externalIcon {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.amountCell {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 150px;
+}
+
+.amountRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.amount {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.usdValue {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.token {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.ltvCell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 90px;
+}
+
+.ltvTier {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.ltvBar {
+  height: 3px;
+  background: var(--border-subtle);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.ltvFill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+.healthCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.healthValue {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.healthLabel {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.muted {
+  color: var(--text-secondary);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.liqPrice {
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-card);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.actionBtn:hover {
+  border-color: var(--accent-green-border);
+  color: var(--accent-green);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.autoUpdate {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.updateDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  box-shadow: 0 0 4px var(--accent-green);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.errorBox {
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 6px;
+  padding: 16px 20px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.errorBox strong {
+  color: #ef4444;
+}
+
+.emptyBox {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 6px;
+  padding: 40px 24px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.noLoanBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.noLoanText {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.createLoanBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--accent-green);
+  background: transparent;
+  border: 1px solid var(--accent-green-border);
+  border-radius: 4px;
+  padding: 8px 16px;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.createLoanBtn:hover {
+  background: rgba(var(--accent-green-rgb, 74 222 128) / 0.08);
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 32px 20px 48px;
+  }
+}

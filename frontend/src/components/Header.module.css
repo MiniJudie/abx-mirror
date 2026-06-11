@@ -1,0 +1,175 @@
+.header {
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(5, 5, 5, 0.92);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.brandRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1;
+}
+
+.brandName {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+}
+
+.brandBadge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent-green);
+  border: 1px solid var(--accent-green-border);
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+.brandSub {
+  display: block;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.navLink {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.navLink:hover {
+  color: var(--text-primary);
+}
+
+.navLinkActive {
+  color: var(--accent-green);
+  border-bottom-color: var(--accent-green);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.network {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+}
+
+.networkDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  box-shadow: 0 0 6px var(--accent-green);
+}
+
+.walletButton {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent-green);
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.walletButton:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-green-border);
+}
+
+.walletButtonConnected {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border-color: var(--border-card);
+  letter-spacing: 0.02em;
+  font-weight: 600;
+  padding: 8px 14px;
+}
+
+.walletButtonConnected:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-green-border);
+}
+
+.walletDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  box-shadow: 0 0 6px var(--accent-green);
+  flex-shrink: 0;
+}
+
+.walletAddress {
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  letter-spacing: 0;
+}
+
+@media (max-width: 900px) {
+  .nav {
+    display: none;
+  }
+
+  .inner {
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 520px) {
+  .network {
+    display: none;
+  }
+}

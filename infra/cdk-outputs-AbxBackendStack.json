@@ -1,0 +1,14 @@
+{
+  "AbxBackendStack": {
+    "TableName": "abx-loans",
+    "ApiUrl": "https://dgnlmsrky6.execute-api.eu-west-3.amazonaws.com",
+    "BucketName": "abx-mirror",
+    "TableArn": "arn:aws:dynamodb:eu-west-3:304824519169:table/abx-loans",
+    "PricesTableName": "abx-prices",
+    "DistributionId": "E24NSAU9TYWHF2",
+    "ApiCustomUrl": "https://api-abx.alephium-mirrors.com",
+    "ApiDistributionDomain": "dkqeipoqcvwcj.cloudfront.net",
+    "CloudFrontDomain": "d1b00a7k1g9nw7.cloudfront.net",
+    "ApiDistributionId": "E1ZVA6UGQDCCVX"
+  }
+}

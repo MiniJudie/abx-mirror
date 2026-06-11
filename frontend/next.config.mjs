@@ -1,0 +1,34 @@
+import path from "path";
+import { fileURLToPath } from "url";
+import { config as loadEnv } from "dotenv";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+loadEnv({ path: path.resolve(__dirname, "../.env") });
+
+const artifactsDir = path.resolve(__dirname, "../artifacts");
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: "export",
+  trailingSlash: true,
+  transpilePackages: ["@alephium/web3-react", "@alephium/web3"],
+  images: {
+    unoptimized: true,
+  },
+  experimental: {
+    // Allow webpack to process TypeScript files imported from outside this
+    // project directory (the shared artifacts/ package at the monorepo root).
+    externalDir: true,
+  },
+  webpack: (config, { defaultLoaders }) => {
+    // Ensure SWC/Babel transpiles TypeScript in the artifacts directory.
+    config.module.rules.push({
+      test: /\.[jt]sx?$/,
+      include: [artifactsDir],
+      use: [defaultLoaders.babel],
+    });
+    return config;
+  },
+};
+
+export default nextConfig;

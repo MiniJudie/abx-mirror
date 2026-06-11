@@ -1,0 +1,156 @@
+.footer {
+  border-top: 1px solid var(--border-subtle);
+  margin-top: auto;
+}
+
+.verifyBar {
+  background: rgba(245, 158, 11, 0.04);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.15);
+}
+
+.verifyInner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.verifyText {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.verifyIcon {
+  color: #f59e0b;
+}
+
+.verifyLinks {
+  display: flex;
+  gap: 20px;
+}
+
+.verifyLink {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent-green);
+  transition: opacity 0.15s;
+}
+
+.verifyLink:hover {
+  opacity: 0.8;
+}
+
+.main {
+  background: var(--bg-elevated);
+}
+
+.mainInner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 32px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr 1.6fr;
+  gap: 32px;
+}
+
+.brandCol {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.brandRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brandName {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.brandBadge {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent-green);
+  border: 1px solid var(--accent-green-border);
+  padding: 2px 5px;
+  border-radius: 2px;
+}
+
+.brandDesc {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 240px;
+}
+
+.linkCol {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.colTitle {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.linkCol a {
+  font-size: 12px;
+  color: var(--text-secondary);
+  transition: color 0.15s;
+}
+
+.linkCol a:hover {
+  color: var(--accent-green);
+}
+
+.disclaimerCol p {
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.copyright {
+  text-align: center;
+  padding: 16px 32px;
+  font-size: 11px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-subtle);
+}
+
+@media (max-width: 900px) {
+  .mainInner {
+    grid-template-columns: 1fr 1fr;
+    padding: 32px 20px;
+    gap: 24px;
+  }
+
+  .brandCol {
+    grid-column: 1 / -1;
+  }
+
+  .verifyInner {
+    padding: 14px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mainInner {
+    grid-template-columns: 1fr;
+  }
+}

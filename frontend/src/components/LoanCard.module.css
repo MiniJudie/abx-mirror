@@ -1,0 +1,126 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 8px;
+  padding: 20px;
+  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+  cursor: pointer;
+}
+
+.card:hover {
+  background: var(--bg-card-hover);
+  border-color: #2e2e2e;
+  transform: translateY(-1px);
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--accent-red);
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  border: 1px solid;
+  border-radius: 3px;
+  padding: 2px 7px;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+.address {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: "Courier New", monospace;
+  letter-spacing: 0.02em;
+}
+
+.divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 4px 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 400;
+  flex-shrink: 0;
+}
+
+.fieldValue {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-family: "Courier New", monospace;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fieldValueHighlight {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-primary);
+  font-weight: 500;
+  text-align: right;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.updated {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.explorerLink {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: color 0.15s;
+}
+
+.card:hover .explorerLink {
+  color: var(--accent-red);
+}

@@ -1,0 +1,28 @@
+.banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(245, 158, 11, 0.06);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 28px 0 36px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.icon {
+  color: #f59e0b;
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.banner strong {
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.sub {
+  color: var(--text-secondary);
+}

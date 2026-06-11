@@ -1,0 +1,24 @@
+{
+  "name": "@abx-mirror/infra",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "build": "tsc",
+    "cdk": "cdk"
+  },
+  "dependencies": {
+    "@alephium/web3": "^2.0.0",
+    "@aws-sdk/client-dynamodb": "^3.0.0",
+    "@aws-sdk/lib-dynamodb": "^3.0.0",
+    "aws-cdk-lib": "^2.0.0",
+    "constructs": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.0",
+    "@types/node": "^20.0.0",
+    "aws-cdk": "^2.0.0",
+    "esbuild": "^0.20.0",
+    "ts-node": "^10.0.0",
+    "typescript": "^5.0.0"
+  }
+}

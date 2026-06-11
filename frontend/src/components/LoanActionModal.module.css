@@ -1,0 +1,505 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.dialog {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  padding: 28px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dialogHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dialogEyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--accent-green);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.dialogTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 16px;
+  padding: 4px 8px;
+  cursor: pointer;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.closeBtn:hover {
+  color: var(--text-primary);
+}
+
+.description {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-top: -8px;
+}
+
+.zeroFeeNote {
+  font-size: 12px;
+  color: var(--text-muted, #888);
+  background: rgba(99, 102, 241, 0.07);
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  border-radius: 6px;
+  padding: 7px 10px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Interest rate picker */
+.rateSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rateLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.rateGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rateBtn {
+  padding: 5px 13px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color, rgba(255,255,255,0.12));
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.rateBtn:hover:not(:disabled) {
+  border-color: var(--accent-green, #22c55e);
+  color: var(--accent-green, #22c55e);
+}
+
+.rateBtnActive {
+  background: var(--accent-green, #22c55e);
+  border-color: var(--accent-green, #22c55e);
+  color: #000 !important;
+  font-weight: 700;
+}
+
+.rateBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.mintingFeeRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 4px;
+  border-top: 1px solid var(--border-color, rgba(255,255,255,0.08));
+  margin-top: 4px;
+}
+
+.mintingFeeLabel {
+  font-size: 12px;
+  color: var(--text-muted, #888);
+}
+
+.mintingFeeValue {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Current metrics row */
+.metricsRow {
+  display: flex;
+  gap: 16px;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+}
+
+.metric {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.metricLabel {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.metricValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Amount input */
+.inputSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inputLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+
+.maxAvail {
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.maxLink {
+  background: none;
+  border: none;
+  color: var(--accent-green);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  font-weight: 600;
+  transition: opacity 0.15s;
+}
+
+.maxLink:hover {
+  opacity: 0.8;
+}
+
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.inputRow:focus-within {
+  border-color: var(--accent-green-border);
+}
+
+.amountInput {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 12px 14px;
+  min-width: 0;
+}
+
+.amountInput::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* hide browser spinners */
+.amountInput::-webkit-inner-spin-button,
+.amountInput::-webkit-outer-spin-button {
+  appearance: none;
+}
+
+.tokenLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 0 12px;
+  white-space: nowrap;
+}
+
+.maxBtn {
+  background: var(--accent-green-muted);
+  border: none;
+  border-left: 1px solid var(--border-card);
+  color: var(--accent-green);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0 14px;
+  height: 100%;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+  min-height: 48px;
+}
+
+.maxBtn:hover:not(:disabled) {
+  background: rgba(0, 230, 118, 0.25);
+}
+
+.maxBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Slider */
+.sliderRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sliderPct {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-green);
+  min-width: 36px;
+  text-align: right;
+}
+
+.slider {
+  flex: 1;
+  height: 4px;
+  appearance: none;
+  background: var(--border-card);
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  border: 2px solid var(--bg-elevated);
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  border: 2px solid var(--bg-elevated);
+  cursor: pointer;
+}
+
+.slider:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Preview */
+.preview {
+  padding: 14px 16px;
+  background: rgba(0, 230, 118, 0.04);
+  border: 1px solid var(--accent-green-border);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.previewTitle {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-green);
+}
+
+.previewRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.previewLabel {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.previewValue {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.riskLabel {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: inherit;
+  opacity: 0.8;
+}
+
+.warnLtv {
+  font-size: 12px;
+  color: var(--status-undercollateralized);
+  margin-top: 2px;
+}
+
+.errorMsg {
+  font-size: 12px;
+  color: var(--status-undercollateralized);
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 6px;
+  padding: 10px 12px;
+  line-height: 1.5;
+}
+
+.successMsg {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-green);
+  text-align: center;
+  padding: 8px 0;
+}
+
+/* Footer */
+.dialogFooter {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.cancelBtn {
+  flex: 0 0 auto;
+  background: none;
+  border: 1px solid var(--border-card);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.cancelBtn:hover:not(:disabled) {
+  border-color: var(--text-muted);
+  color: var(--text-primary);
+}
+
+.cancelBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.confirmBtn {
+  flex: 1;
+  background: var(--accent-green);
+  border: none;
+  color: #000;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+}
+
+.confirmBtn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.confirmBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Spinner */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 520px) {
+  .dialog {
+    padding: 20px 16px;
+    gap: 16px;
+  }
+
+  .metricsRow {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .metric {
+    flex: 0 0 calc(50% - 8px);
+  }
+}

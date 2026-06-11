@@ -1,0 +1,29 @@
+{
+  "name": "abx-mirror",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "deploy:api": "tsx scripts/deploy-api.ts",
+    "deploy:watcher": "tsx scripts/deploy-watcher.ts",
+    "trigger:watcher": "tsx scripts/trigger-watcher.ts",
+    "deploy:frontend": "tsx scripts/deploy-frontend.ts",
+    "seed": "tsx scripts/seed.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cloudformation": "^3.0.0",
+    "@aws-sdk/client-cloudfront": "^3.0.0",
+    "@aws-sdk/client-dynamodb": "^3.0.0",
+    "@aws-sdk/client-lambda": "^3.0.0",
+    "@aws-sdk/client-s3": "^3.0.0",
+    "@aws-sdk/client-sts": "^3.1065.0",
+    "@aws-sdk/credential-providers": "^3.1065.0",
+    "@aws-sdk/lib-dynamodb": "^3.0.0",
+    "dotenv": "^17.4.2",
+    "execa": "^8.0.0"
+  }
+}
