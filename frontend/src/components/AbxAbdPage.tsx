@@ -10,6 +10,7 @@ import {
   buildAbdSlices,
 } from "./TokenDistributionChart";
 import { fetchTokenStats, type TokenStatsResponse } from "@/lib/api";
+import { ROUTES } from "@/lib/routes";
 import styles from "./AbxAbdPage.module.css";
 
 const EXPLORER = "https://explorer.alephium.org/tokens";
@@ -71,7 +72,7 @@ export function AbxAbdPage() {
                 and participates in protocol revenue sharing.
               </p>
               <div className={styles.descLinks}>
-                <Link href="/staking" className={styles.descLink}>
+                <Link href={ROUTES.staking} className={styles.descLink}>
                   View staking →
                 </Link>
                 <a
@@ -105,10 +106,10 @@ export function AbxAbdPage() {
                 auction pools to bid on liquidations, or redeem it for ALPH.
               </p>
               <div className={styles.descLinks}>
-                <Link href="/" className={styles.descLink}>
+                <Link href={ROUTES.home} className={styles.descLink}>
                   View loans →
                 </Link>
-                <Link href="/auction" className={styles.descLink}>
+                <Link href={ROUTES.auction} className={styles.descLink}>
                   View auctions →
                 </Link>
                 <a

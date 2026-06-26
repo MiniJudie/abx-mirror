@@ -163,9 +163,38 @@
   border-top: 1px solid var(--border-subtle);
 }
 
+.footerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .updated {
   font-size: 11px;
   color: var(--text-muted);
+}
+
+.refreshBtn {
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, opacity 0.15s;
+}
+
+.refreshBtn:hover:not(:disabled) {
+  color: var(--accent-green);
+  border-color: var(--accent-green-border);
+}
+
+.refreshBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .explorerLink {

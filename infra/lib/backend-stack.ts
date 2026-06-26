@@ -236,6 +236,24 @@ export class BackendStack extends cdk.Stack {
       signing: cloudfront.Signing.SIGV4_NO_OVERRIDE,
     });
 
+    // Rewrite extensionless paths to their Next.js static export equivalents.
+    // With trailingSlash: false the app emits flat files like /auction.html, which
+    // S3 serves directly. This rewrite still helps legacy /auction/ URLs.
+    const rewriteFunction = new cloudfront.Function(this, "RewriteIndexHtml", {
+      code: cloudfront.FunctionCode.fromInline(`
+function handler(event) {
+  var uri = event.request.uri;
+  if (uri.endsWith('/')) {
+    event.request.uri += 'index.html';
+  } else if (!uri.split('/').pop().includes('.')) {
+    event.request.uri += '/index.html';
+  }
+  return event.request;
+}
+      `.trim()),
+      runtime: cloudfront.FunctionRuntime.JS_2_0,
+    });
+
     const acmCertArn   = process.env.ACM_CERTIFICATE_ARN;
     const apiCustomDomain = normalizeDomain(process.env.API_CUSTOM_DOMAIN);
 
@@ -246,13 +264,24 @@ export class BackendStack extends cdk.Stack {
         }),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+        functionAssociations: [
+          {
+            function: rewriteFunction,
+            eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
+          },
+        ],
       },
       defaultRootObject: "index.html",
       errorResponses: [
         {
+          httpStatus: 403,
+          responseHttpStatus: 404,
+          responsePagePath: "/404.html",
+        },
+        {
           httpStatus: 404,
-          responseHttpStatus: 200,
-          responsePagePath: "/index.html",
+          responseHttpStatus: 404,
+          responsePagePath: "/404.html",
         },
       ],
     });

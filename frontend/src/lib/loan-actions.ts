@@ -250,6 +250,24 @@ export async function getUserZeroFeeRemainingDebt(
   return fromAttoUnits(remaining, ABD_DECIMALS);
 }
 
+export interface OnChainLoanAmounts {
+  collateral: number;
+  debt: number;
+}
+
+/** Fetches live collateral and debt from the Loan contract on-chain. */
+export async function fetchLoanOnChainAmounts(
+  loanAddress: string,
+): Promise<OnChainLoanAmounts> {
+  ensureNodeProvider();
+  const state = await Loan.at(loanAddress).fetchState();
+  const { collateral, debt, debtDecimals } = state.fields;
+  return {
+    collateral: fromAttoUnits(collateral as bigint, ALPH_DECIMALS),
+    debt: fromAttoUnits(debt as bigint, Number(debtDecimals as bigint)),
+  };
+}
+
 export async function repayAbdTx(
   signer: SignerProvider,
   abdAmount: number,

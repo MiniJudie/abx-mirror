@@ -4,7 +4,7 @@ import { AlephiumProviders } from "@/components/AlephiumProviders";
 import { MatomoAnalytics } from "@/components/MatomoAnalytics";
 import "./globals.css";
 
-const BASE_URL = "https://abx-mirror.com";
+const BASE_URL = "https://abx.alephium-mirrors.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),

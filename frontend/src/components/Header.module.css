@@ -23,6 +23,13 @@
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.15s;
+}
+
+.brand:hover {
+  opacity: 0.9;
 }
 
 .brandRow {
@@ -176,9 +183,54 @@
   transform: scale(1.1);
 }
 
+.menuBtn {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 16px;
+  line-height: 1;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.mobileNav {
+  display: none;
+}
+
+.mobileNavLink {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: color 0.15s, background 0.15s;
+}
+
+.mobileNavLink:hover {
+  color: var(--text-primary);
+  background: var(--bg-card);
+}
+
 @media (max-width: 900px) {
   .nav {
     display: none;
+  }
+
+  .menuBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobileNav {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--border-subtle);
+    background: rgba(5, 5, 5, 0.98);
   }
 
   .inner {

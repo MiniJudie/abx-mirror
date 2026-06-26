@@ -4,27 +4,73 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { sendEvent } from "@socialgouv/matomo-next";
+import { ROUTES, isActiveRoute } from "@/lib/routes";
 import { ConnectWalletButton } from "./ConnectWalletButton";
 import { DonationModal } from "./DonationModal";
 import styles from "./Header.module.css";
 
 const NAV_ITEMS = [
-  { label: "LOANS", href: "/", external: false },
-  { label: "AUCTIONS", href: "/auction", external: false },
-  { label: "STAKING", href: "/staking", external: false },
-  { label: "ABX/ABD", href: "/abx-abd", external: false },
+  { label: "LOANS", href: ROUTES.home, external: false },
+  { label: "AUCTIONS", href: ROUTES.auction, external: false },
+  { label: "STAKING", href: ROUTES.staking, external: false },
+  { label: "ABX/ABD", href: ROUTES.abxAbd, external: false },
   { label: "ALPHBANX", href: "https://app.alphbanx.com", external: true },
 ] as const;
+
+function trackNavClick(label: string) {
+  sendEvent({
+    category: "navigation",
+    action: "click",
+    name: label.toLowerCase(),
+  });
+}
 
 export function Header() {
   const pathname = usePathname();
   const [donateOpen, setDonateOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  function renderNavItem(item: (typeof NAV_ITEMS)[number], className: string) {
+    const isActive = !item.external && isActiveRoute(pathname, item.href);
+    if (item.external) {
+      return (
+        <a
+          key={item.label}
+          href={item.href}
+          className={className}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => trackNavClick(item.label)}
+        >
+          {item.label}
+        </a>
+      );
+    }
+    return (
+      <Link
+        key={item.label}
+        href={item.href}
+        className={`${className} ${isActive ? styles.navLinkActive : ""}`}
+        onClick={() => {
+          trackNavClick(item.label);
+          setMobileNavOpen(false);
+        }}
+      >
+        {item.label}
+      </Link>
+    );
+  }
 
   return (
     <>
     <header className={styles.header}>
       <div className={styles.inner}>
-        <div className={styles.brand}>
+        <Link
+          href={ROUTES.home}
+          className={styles.brand}
+          onClick={() => trackNavClick("home")}
+          aria-label="AlphBanX Mirror — home"
+        >
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden>
             <path
               d="M16 2L28 28H22L19.5 22H12.5L10 28H4L16 2Z"
@@ -40,48 +86,10 @@ export function Header() {
             </div>
             <span className={styles.brandSub}>LENDING PROTOCOL</span>
           </div>
-        </div>
+        </Link>
 
-        <nav className={styles.nav}>
-          {NAV_ITEMS.map((item) => {
-            const isActive = !item.external && pathname === item.href;
-            if (item.external) {
-              return (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  className={styles.navLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() =>
-                    sendEvent({
-                      category: "navigation",
-                      action: "click",
-                      name: item.label.toLowerCase(),
-                    })
-                  }
-                >
-                  {item.label}
-                </a>
-              );
-            }
-            return (
-              <Link
-                key={item.label}
-                href={item.href}
-                className={`${styles.navLink} ${isActive ? styles.navLinkActive : ""}`}
-                onClick={() =>
-                  sendEvent({
-                    category: "navigation",
-                    action: "click",
-                    name: item.label.toLowerCase(),
-                  })
-                }
-              >
-                {item.label}
-              </Link>
-            );
-          })}
+        <nav className={styles.nav} aria-label="Main navigation">
+          {NAV_ITEMS.map((item) => renderNavItem(item, styles.navLink))}
         </nav>
 
         <div className={styles.actions}>
@@ -90,6 +98,17 @@ export function Header() {
             Mainnet
           </div>
           <button
+            type="button"
+            className={styles.menuBtn}
+            onClick={() => setMobileNavOpen((open) => !open)}
+            aria-expanded={mobileNavOpen}
+            aria-controls="mobile-nav"
+            aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
+          >
+            {mobileNavOpen ? "✕" : "☰"}
+          </button>
+          <button
+            type="button"
             className={styles.donateBtn}
             onClick={() => setDonateOpen(true)}
             title="Support the dev"
@@ -99,6 +118,12 @@ export function Header() {
           <ConnectWalletButton />
         </div>
       </div>
+
+      {mobileNavOpen && (
+        <nav id="mobile-nav" className={styles.mobileNav} aria-label="Mobile navigation">
+          {NAV_ITEMS.map((item) => renderNavItem(item, styles.mobileNavLink))}
+        </nav>
+      )}
     </header>
 
     {donateOpen && <DonationModal onClose={() => setDonateOpen(false)} />}

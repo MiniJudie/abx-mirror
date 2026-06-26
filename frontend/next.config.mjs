@@ -10,7 +10,8 @@ const artifactsDir = path.resolve(__dirname, "../artifacts");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "export",
-  trailingSlash: true,
+  // Flat `.html` files (e.g. `/auction.html`) work on S3 without CloudFront rewrites.
+  trailingSlash: false,
   transpilePackages: ["@alephium/web3-react", "@alephium/web3"],
   images: {
     unoptimized: true,

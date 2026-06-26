@@ -70,6 +70,13 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  width: fit-content;
+}
+
+.brandRow:hover {
+  opacity: 0.9;
 }
 
 .brandName {

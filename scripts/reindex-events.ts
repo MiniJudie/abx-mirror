@@ -304,9 +304,12 @@ async function reindexLiquidations(
         { start: cursor, limit: PAGE_SIZE },
       );
 
-    // Build txId → BidWin data map for this page
+    // Build txId → bid → BidWin data map for this page.
+    // Keyed by bid address (inner key) to deduplicate ghost-block duplicates: the Alephium
+    // node returns the same events twice when a tx appears in both a ghost block and the
+    // canonical block. Using bid as the inner key ensures each bid is only counted once.
     type BidWinData = { bid: string; owner: string; abdAmount: bigint; reward: bigint };
-    const bidWinByTxId = new Map<string, BidWinData[]>();
+    const bidWinByTxId = new Map<string, Map<string, BidWinData>>();
 
     for (const event of result.events) {
       if (
@@ -323,9 +326,11 @@ async function reindexLiquidations(
       const rewardIdx = event.eventIndex === BID_WIN_EVENT_INDEX ? 5 : 6;
       const reward = BigInt(fields[rewardIdx].value);
 
-      const list = bidWinByTxId.get(event.txId) ?? [];
-      list.push({ bid, owner, abdAmount, reward });
-      bidWinByTxId.set(event.txId, list);
+      const byBid = bidWinByTxId.get(event.txId) ?? new Map<string, BidWinData>();
+      if (!byBid.has(bid)) {
+        byBid.set(bid, { bid, owner, abdAmount, reward });
+        bidWinByTxId.set(event.txId, byBid);
+      }
     }
 
     for (const event of result.events) {
@@ -339,7 +344,7 @@ async function reindexLiquidations(
       const newDebt = fields[3].value;
 
       // Enrich with BidWin data from same tx
-      const bidWins = bidWinByTxId.get(event.txId) ?? [];
+      const bidWins = Array.from((bidWinByTxId.get(event.txId) ?? new Map()).values());
       let auctionOwner: string | undefined;
       let totalAbdLiquidated = 0n;
       let totalAlphReward = 0n;

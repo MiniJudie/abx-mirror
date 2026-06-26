@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { sendEvent } from "@socialgouv/matomo-next";
 import type { SignerProvider } from "@alephium/web3";
 import type { Loan } from "@/lib/api";
 import { formatTokenAmount, toUsd } from "@/lib/format";
+import { useOnChainLoanState } from "@/hooks/useOnChainLoanState";
 import {
   LIQUIDATION_LTV_PERCENT,
   displayInterestRate,
@@ -58,10 +59,40 @@ export function MyLoanPanel({
   signer,
   onLoanRefetch,
 }: Props) {
-  const ltv = loanLtvPercent(loan.debt, loan.collateral, abdPrice, alphPrice);
-  const health = loanCollateralRatio(loan.debt, loan.collateral, abdPrice, alphPrice);
+  const {
+    amounts: onChainAmounts,
+    loading: onChainLoading,
+    fetchedAt: onChainFetchedAt,
+    refresh: refreshOnChain,
+  } = useOnChainLoanState(loan.loanAddress);
+
+  const effectiveLoan = useMemo<Loan>(() => {
+    if (!onChainAmounts) return loan;
+    return {
+      ...loan,
+      collateral: formatTokenAmount(onChainAmounts.collateral),
+      debt: formatTokenAmount(onChainAmounts.debt),
+    };
+  }, [loan, onChainAmounts]);
+
+  const ltv = loanLtvPercent(
+    effectiveLoan.debt,
+    effectiveLoan.collateral,
+    abdPrice,
+    alphPrice,
+  );
+  const health = loanCollateralRatio(
+    effectiveLoan.debt,
+    effectiveLoan.collateral,
+    abdPrice,
+    alphPrice,
+  );
   const riskTier = ltv !== null ? getLtvRiskTier(ltv) : null;
-  const liqPrice = loanLiquidationPrice(loan.debt, loan.collateral, abdPrice);
+  const liqPrice = loanLiquidationPrice(
+    effectiveLoan.debt,
+    effectiveLoan.collateral,
+    abdPrice,
+  );
   const alphUsd = alphPrice ? parseAmount(alphPrice) : null;
   const belowLiq = liqPrice !== null && alphUsd !== null && alphUsd < liqPrice;
   const explorerUrl = `https://explorer.alephium.org/addresses/${loan.loanAddress}`;
@@ -70,12 +101,15 @@ export function MyLoanPanel({
   const [pendingOp, setPendingOp] = useState<{ txId: string; label: string } | null>(null);
   const { alphBalance, abdBalance, refresh: refreshBalances } = useWalletBalances(walletAddress);
 
+  const refreshAll = useCallback(() => {
+    refreshOnChain();
+    refreshBalances();
+    onLoanRefetch();
+  }, [refreshOnChain, refreshBalances, onLoanRefetch]);
+
   const { status: pendingStatus } = usePendingTx(
     pendingOp?.txId ?? null,
-    () => {
-      refreshBalances();
-      onLoanRefetch();
-    },
+    refreshAll,
   );
 
   // Auto-dismiss confirmed banner after a short delay
@@ -110,22 +144,24 @@ export function MyLoanPanel({
         <div className={styles.stat}>
           <span className={styles.statLabel}>Collateral</span>
           <span className={styles.statValue}>
-            {formatTokenAmount(loan.collateral)}
+            {formatTokenAmount(effectiveLoan.collateral)}
             <TokenIcon symbol="ALPH" size={14} showSymbol />
           </span>
-          {toUsd(loan.collateral, alphPrice) && (
-            <span className={styles.statSub}>{toUsd(loan.collateral, alphPrice)}</span>
+          {toUsd(effectiveLoan.collateral, alphPrice) && (
+            <span className={styles.statSub}>
+              {toUsd(effectiveLoan.collateral, alphPrice)}
+            </span>
           )}
         </div>
 
         <div className={styles.stat}>
           <span className={styles.statLabel}>Debt</span>
           <span className={styles.statValue}>
-            {formatTokenAmount(loan.debt)}
+            {formatTokenAmount(effectiveLoan.debt)}
             <TokenIcon symbol="ABD" size={14} showSymbol />
           </span>
-          {toUsd(loan.debt, abdPrice) && (
-            <span className={styles.statSub}>{toUsd(loan.debt, abdPrice)}</span>
+          {toUsd(effectiveLoan.debt, abdPrice) && (
+            <span className={styles.statSub}>{toUsd(effectiveLoan.debt, abdPrice)}</span>
           )}
         </div>
 
@@ -177,7 +213,7 @@ export function MyLoanPanel({
         <div className={styles.stat}>
           <span className={styles.statLabel}>Interest</span>
           <span className={styles.statValue}>
-            {displayInterestRate(loan.interestRate, loan.debt)}
+            {displayInterestRate(effectiveLoan.interestRate, effectiveLoan.debt)}
           </span>
         </div>
       </div>
@@ -215,18 +251,35 @@ export function MyLoanPanel({
       </div>
 
       <div className={styles.footer}>
-        <span className={styles.updated}>Updated {timeAgo(loan.lastUpdated)}</span>
-        <a
-          href={explorerUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.explorerLink}
-          onClick={() =>
-            sendEvent({ category: "loan", action: "view_my_loan", name: loan.loanAddress })
-          }
-        >
-          View on Explorer ↗
-        </a>
+        <span className={styles.updated}>
+          {onChainLoading
+            ? "Refreshing on-chain values…"
+            : onChainFetchedAt
+              ? `On-chain ${timeAgo(onChainFetchedAt.toISOString())}`
+              : `Updated ${timeAgo(loan.lastUpdated)}`}
+        </span>
+        <div className={styles.footerActions}>
+          <button
+            type="button"
+            className={styles.refreshBtn}
+            onClick={refreshAll}
+            disabled={onChainLoading}
+            aria-label="Refresh on-chain loan values"
+          >
+            {onChainLoading ? "…" : "↻ Refresh"}
+          </button>
+          <a
+            href={explorerUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.explorerLink}
+            onClick={() =>
+              sendEvent({ category: "loan", action: "view_my_loan", name: loan.loanAddress })
+            }
+          >
+            View on Explorer ↗
+          </a>
+        </div>
       </div>
 
       {/* Pending / confirmed transaction banner */}
@@ -262,7 +315,7 @@ export function MyLoanPanel({
       {activeModal && (
         <LoanActionModal
           action={activeModal}
-          loan={loan}
+          loan={effectiveLoan}
           abdPrice={abdPrice}
           alphPrice={alphPrice}
           alphBalance={alphBalance ?? 0}

@@ -1,3 +1,4 @@
+import { ROUTES } from "@/lib/routes";
 import styles from "./Footer.module.css";
 
 export function Footer() {
@@ -33,14 +34,14 @@ export function Footer() {
       <div className={styles.main}>
         <div className={styles.mainInner}>
           <div className={styles.brandCol}>
-            <div className={styles.brandRow}>
+            <a href={ROUTES.home} className={styles.brandRow}>
               <svg width="24" height="24" viewBox="0 0 32 32" fill="none" aria-hidden>
                 <path d="M16 2L28 28H22L19.5 22H12.5L10 28H4L16 2Z" fill="var(--accent-green)" />
                 <path d="M13.5 17H18.5L16 11.5L13.5 17Z" fill="#050505" />
               </svg>
               <span className={styles.brandName}>AlphBanX</span>
               <span className={styles.brandBadge}>MIRROR</span>
-            </div>
+            </a>
             <p className={styles.brandDesc}>
               Community-run mirror interface for the AlphBanX lending protocol on Alephium.
             </p>
@@ -48,10 +49,10 @@ export function Footer() {
 
           <div className={styles.linkCol}>
             <span className={styles.colTitle}>PROTOCOL</span>
-            <a href="#loans">Loans</a>
-            <a href="https://app.alphbanx.com" target="_blank" rel="noopener noreferrer">Auctions</a>
-            <a href="https://app.alphbanx.com" target="_blank" rel="noopener noreferrer">Staking</a>
-            <a href="https://app.alphbanx.com" target="_blank" rel="noopener noreferrer">ABX Token</a>
+            <a href={ROUTES.home}>Loans</a>
+            <a href={ROUTES.auction}>Auctions</a>
+            <a href={ROUTES.staking}>Staking</a>
+            <a href={ROUTES.abxAbd}>ABX / ABD</a>
           </div>
 
           <div className={styles.linkCol}>

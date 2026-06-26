@@ -321,9 +321,12 @@ async function trackLiquidationEvents(
     { start: cursor, limit: 100 },
   );
 
-  // Build a txId → BidWin/BidPartialWin data map for enriching liquidation records
+  // Build a txId → bid → BidWin/BidPartialWin data map for enriching liquidation records.
+  // Keyed by bid address (inner key) to deduplicate ghost-block duplicates: the Alephium node
+  // returns the same events twice when a tx appears in both a ghost block and the canonical
+  // block. Using bid as the inner key ensures each bid is only counted once per txId.
   type BidWinData = { bid: string; owner: string; abdAmount: bigint; reward: bigint };
-  const bidWinByTxId = new Map<string, BidWinData[]>();
+  const bidWinByTxId = new Map<string, Map<string, BidWinData>>();
 
   for (const event of result.events) {
     if (
@@ -340,9 +343,11 @@ async function trackLiquidationEvents(
     const rewardFieldIdx = event.eventIndex === BID_WIN_EVENT_INDEX ? 5 : 6;
     const reward = BigInt((fields[rewardFieldIdx] as { value: string }).value);
 
-    const list = bidWinByTxId.get(event.txId) ?? [];
-    list.push({ bid, owner, abdAmount, reward });
-    bidWinByTxId.set(event.txId, list);
+    const byBid = bidWinByTxId.get(event.txId) ?? new Map<string, BidWinData>();
+    if (!byBid.has(bid)) {
+      byBid.set(bid, { bid, owner, abdAmount, reward });
+      bidWinByTxId.set(event.txId, byBid);
+    }
   }
 
   const liquidationEvents = result.events.filter(
@@ -362,7 +367,7 @@ async function trackLiquidationEvents(
     const newDebt = (fields[3] as { value: string }).value;
 
     // Enrich with BidWin data emitted in the same transaction
-    const bidWins = bidWinByTxId.get(event.txId) ?? [];
+    const bidWins = Array.from((bidWinByTxId.get(event.txId) ?? new Map()).values());
     let auctionOwner: string | undefined;
     let totalAbdLiquidated = 0n;
     let totalAlphReward = 0n;
