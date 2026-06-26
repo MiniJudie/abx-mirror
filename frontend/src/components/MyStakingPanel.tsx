@@ -7,8 +7,8 @@ import { formatNumber } from "@/lib/format";
 import { getStakingTier, type StakingTier } from "@/lib/staking-tiers";
 import {
   claimStakerAlph,
+  claimVestingAbx,
   pollTxStatus,
-  unlockStakerVesting,
 } from "@/lib/stake-actions";
 import { StakeModal } from "./StakeModal";
 import { UnstakeModal } from "./UnstakeModal";
@@ -46,11 +46,16 @@ function canClaimAlph(position: StakingPosition): boolean {
   return parseFloat(position.claimableAlph) > 0;
 }
 
+function claimableAbxAmount(position: StakingPosition): number {
+  const withdrawable = parseFloat(position.withdrawableAbx) || 0;
+  const afterUnlock = parseFloat(position.withdrawableAfterUnlockAbx) || 0;
+  const unlockReady =
+    !position.nextUnlockAt || new Date(position.nextUnlockAt).getTime() <= Date.now();
+  return withdrawable + (unlockReady ? afterUnlock : 0);
+}
+
 function canClaimVesting(position: StakingPosition): boolean {
-  if (parseFloat(position.withdrawableAbx) > 0) return false;
-  if (parseFloat(position.withdrawableAfterUnlockAbx) <= 0) return false;
-  if (!position.nextUnlockAt) return true;
-  return new Date(position.nextUnlockAt).getTime() <= Date.now();
+  return claimableAbxAmount(position) > 0;
 }
 
 // ─────────────────────────────────────────
@@ -145,7 +150,7 @@ function PositionCard({ position }: { position: StakingPosition }) {
           <span className={styles.statBoxValue}>{fmt(effectiveWithdrawable)}</span>
           {parseFloat(position.withdrawableAbx) === 0 &&
             parseFloat(position.withdrawableAfterUnlockAbx) > 0 && (
-              <span className={styles.statBoxSub}>requires unlock tx</span>
+              <span className={styles.statBoxSub}>claim to withdraw to wallet</span>
             )}
         </div>
       </div>
@@ -317,7 +322,11 @@ export function MyStakingPanel({ walletAddress }: Props) {
     setActionLoading("claim-vesting");
     setActionError(null);
     try {
-      const txId = await unlockStakerVesting(signer, position.stakerContract);
+      const txId = await claimVestingAbx(
+        signer,
+        walletAddress,
+        position.stakerContract,
+      );
       handleTxSubmitted(txId);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Claim vesting failed";

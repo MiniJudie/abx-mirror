@@ -2,7 +2,12 @@
 
 import { web3, NodeProvider, ONE_ALPH, type HexString, type SignerProvider } from "@alephium/web3";
 import { Staker } from "../../../artifacts/artifacts/ts/Staker";
-import { StakeV2, UnstakeV2, UnlockStake, WithdrawRewardV2 } from "../../../artifacts/artifacts/ts/scripts";
+import {
+  StakeV2,
+  UnstakeV2,
+  WithdrawRewardV2,
+  WithdrawStakeV2,
+} from "../../../artifacts/artifacts/ts/scripts";
 
 /** Max lock-info contracts processed per unlock transaction (protocol default). */
 const MAX_UNLOCKS_PER_TX = BigInt(100);
@@ -168,19 +173,48 @@ export async function claimStakerAlph(
   return result.txId;
 }
 
-/** Runs the unlock transaction so vested ABX becomes withdrawable. */
-export async function unlockStakerVesting(
+export interface StakerWithdrawableAmounts {
+  withdrawable: bigint;
+  afterUnlock: bigint;
+}
+
+/** Live withdrawable ABX in the Staker contract (atto units). */
+export async function fetchStakerWithdrawableAmounts(
+  stakerContractAddr: string,
+): Promise<StakerWithdrawableAmounts> {
+  ensureNodeProvider();
+  const staker = Staker.at(stakerContractAddr);
+  const [withdrawable, afterUnlock] = await Promise.all([
+    staker.view.getWithdrawableAmount().then((r) => r.returns as bigint),
+    staker.view.getWithdrawableAfterUnlock().then((r) => r.returns as bigint),
+  ]);
+  return { withdrawable, afterUnlock };
+}
+
+/**
+ * Unlocks matured vesting locks (if any) and withdraws all available ABX to the wallet.
+ * Mirrors AlphBanx's WithdrawStakeV2 script — UnlockStake alone does not send ABX back.
+ */
+export async function claimVestingAbx(
   signer: SignerProvider,
+  walletAddress: string,
   stakerContractAddr: string,
 ): Promise<string> {
   ensureNodeProvider();
-  const state = await Staker.at(stakerContractAddr).fetchState();
+  const { withdrawable, afterUnlock } =
+    await fetchStakerWithdrawableAmounts(stakerContractAddr);
+  const maxAmount = withdrawable + afterUnlock;
+  if (maxAmount <= BigInt(0)) {
+    throw new Error("No withdrawable ABX to claim.");
+  }
 
-  const result = await UnlockStake.execute({
+  const result = await WithdrawStakeV2.execute({
     signer,
     initialFields: {
-      staker: state.contractId as HexString,
-      maxUnlocksAmount: MAX_UNLOCKS_PER_TX,
+      stakeManager: STAKE_MANAGER_CONTRACT_ID,
+      maxAmount,
+      recipient: walletAddress,
+      maxUnlockAmount: MAX_UNLOCKS_PER_TX,
     },
     attoAlphAmount: ONE_ALPH,
   });
